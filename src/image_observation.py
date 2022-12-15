@@ -140,7 +140,7 @@ for i in range(front_num_frames):
     #input('Press Enter to continue...')
     #cv2.imshow('front_frame', edge_detected_front_frame)
     #plt.close()
-    print(i)
+    #print(i)
     front_area[i] = integrated_coordinates[-1,0]
     #cv2.waitKey(0)
 
@@ -166,8 +166,19 @@ for i in range(rear_num_frames):
     #close figure
     #plt.close()
     #cv2.imshow('rear_frame', edge_detected_rear_frame)
-    print(i)
+    #print(i)
     rear_area[i] = integrated_coordinates[-1,0]
     #cv2.waitKey(0)
+
+time = np.linspace(0, front_num_frames, front_num_frames)/frame_rate
+
+plt.figure(1)
+plt.plot(time, front_area, c='r', label='front')
+plt.figure(2)
+plt.plot(time, rear_area, c='b', label='rear')
+plt.figure(3)
+plt.plot(time, rear_area-front_area, c='r', label='front')
+plt.show(block=False)
+input('Press Enter to continue...')
 
 cv2.destroyAllWindows()
