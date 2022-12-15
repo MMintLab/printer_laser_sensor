@@ -23,20 +23,20 @@ previous_time = time.time()
 
 def switch_camera(desired_camera,i2cbus):
     if desired_camera=='front':
+        i2cbus.write_byte_data(0x70, 0x00, 0x02)
         GPIO.output(4, GPIO.HIGH)
         GPIO.output(17, GPIO.LOW)
-        i2cbus.write_byte_data(0x70, 0x00, 0x00)
     elif desired_camera=='rear':
+        i2cbus.write_byte_data(0x70, 0x00, 0x01)
         GPIO.output(4, GPIO.LOW)
         GPIO.output(17, GPIO.LOW)
-        i2cbus.write_byte_data(0x70, 0x00, 0x01)
 
 #take picture with raspberry pi camera
-def take_picture(camera,frame_number,camera_name):
+def take_picture(frame_number,camera_name):
+    camera = PiCamera()
     camera.resolution = (1280, 720)
     camera.capture(camera_name+'_frame'+str(frame_number)+'.jpg')
 
-camera = PiCamera()
 time.sleep(2)
 
 try:
@@ -45,9 +45,9 @@ try:
         if current_time - previous_time > time_between_frames:
             previous_time = current_time
             switch_camera('front',i2cbus)
-            take_picture(camera,frame_number,'front')
+            take_picture(frame_number,'front')
             switch_camera('rear',i2cbus)
-            take_picture(camera,frame_number,'rear')
+            take_picture(frame_number,'rear')
             print(frame_number)
 except:
     camera.close()
