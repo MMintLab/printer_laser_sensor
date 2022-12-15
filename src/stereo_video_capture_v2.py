@@ -44,15 +44,20 @@ def outputs():
 
 time.sleep(2)
 
-with PiCamera() as camera:
-    camera.resolution = (640, 480)
-    camera.framerate = 80
-    time.sleep(2)
-    start = time.time()
-    camera.capture_sequence(outputs(), 'jpeg', use_video_port=True)
-    finish = time.time()
-    print('Captured 40 frames at %.2ffps' % (40 / (finish - start)))
+try:
+    with PiCamera() as camera:
+        camera.resolution = (640, 480)
+        camera.framerate = 80
+        time.sleep(2)
+        start = time.time()
+        camera.capture_sequence(outputs(), 'jpeg', use_video_port=True)
+        finish = time.time()
+        print('Captured 40 frames at %.2ffps' % (40 / (finish - start)))
+        camera.close()
+except:
+    GPIO.cleanup()
     camera.close()
+    print('Failed')
 
 GPIO.cleanup()
 print("Done")
