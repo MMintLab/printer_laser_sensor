@@ -27,6 +27,8 @@ def switch_camera(desired_camera,i2cbus):
 
 camera = PiCamera(resolution=(100, 100), framerate=20)
 # Wait for the automatic gain control to settle
+
+sleep(2)
 camera.shutter_speed = 10000
 
 #display camera fields
@@ -38,8 +40,6 @@ print(camera.awb_gains)
 print(camera.awb_mode)
 print(camera.shutter_speed)
 print(camera.exposure_mode)
-
-sleep(2)
 
 def outputs(numphotos,i2cbus):
     stream = io.BytesIO()
