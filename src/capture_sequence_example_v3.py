@@ -13,7 +13,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT)
 GPIO.setup(17, GPIO.OUT)
 
-maincamera = 1
+maincamera = 0
 
 if maincamera == 0:
     SMBus(1).write_byte_data(0x70, 0x00, 0x01)
@@ -25,6 +25,7 @@ else:
     GPIO.output(17, GPIO.LOW)
 
 def switch_camera():
+    print("switching camera")
     if GPIO.input(4):
         SMBus(1).write_byte_data(0x70, 0x00, 0x01)
         GPIO.output(4, GPIO.LOW)
