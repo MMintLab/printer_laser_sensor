@@ -8,16 +8,23 @@ import cv2 as cv
 import numpy as np
 import RPi.GPIO as GPIO
 from smbus import SMBus
+import sys
+
+capture_framerate = 20
+
+desired_duration = sys.argv[1]
+
+numpics = int(desired_duration*capture_framerate)
 
 #clear files to write to
-f0 = open('camera00time.txt','w')
-f1 = open('camera01time.txt','w')
+f0 = open('camera0time.txt','w')
+f1 = open('camera1time.txt','w')
 f0.close()
 f1.close()
 
 #open file to write to
-f0 = open('camera00time.txt','a')
-f1 = open('camera01time.txt','a')
+f0 = open('camera0time.txt','a')
+f1 = open('camera1time.txt','a')
 
 #store time values in file
 def store_time(camera_number,imagetime):
@@ -43,7 +50,7 @@ def switch_camera(desired_camera,i2cbus):
         GPIO.output(4, GPIO.LOW)
         GPIO.output(17, GPIO.LOW)
 
-camera = PiCamera(resolution=(100, 100), framerate=20)
+camera = PiCamera(resolution=(100, 100), framerate=capture_framerate)
 # Wait for the automatic gain control to settle
 
 sleep(2)
@@ -76,7 +83,7 @@ def outputs(numphotos,i2cbus,starttime):
 # Now fix the values
 # Finally, take several photos with the fixed settings
 starttime = time.time()
-camera.capture_sequence(outputs(100,i2cbus,starttime),use_video_port=True,burst=False)
+camera.capture_sequence(outputs(numpics,i2cbus,starttime),use_video_port=True,burst=False)
 print(time.time()-starttime)
 camera.close()
 GPIO.cleanup()
