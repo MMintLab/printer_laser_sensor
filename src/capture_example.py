@@ -19,3 +19,4 @@ print(camera.exposure_mode)
 sleep(2)
 # Finally, take several photos with the fixed settings
 camera.capture('image1.jpg')
+camera.close()
