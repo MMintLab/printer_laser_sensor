@@ -32,6 +32,7 @@ def switch_camera():
         GPIO.output(4, GPIO.LOW)
         GPIO.output(17, GPIO.LOW)
     else:
+        print("4 is low")
         SMBus(1).write_byte_data(0x70, 0x00, 0x02)
         GPIO.output(4, GPIO.HIGH)
         GPIO.output(17, GPIO.LOW)
