@@ -34,7 +34,8 @@ def outputs(numphotos):
         img = cv.imdecode(data, 1)
         print('inverted')
         #img2 = cv.bitwise_not(img)
-        img.save('image%d.jpg' % i)
+        #save image
+        cv.imwrite('image%d.jpg' % i, img)
         stream.seek(0)
         stream.truncate()
 
