@@ -78,7 +78,7 @@ def outputs(numphotos,i2cbus,starttime):
         imagetime = time.time()-starttime
         data = np.frombuffer(stream.getvalue(), dtype=np.uint8)
         img = cv.imdecode(data, 1)
-        cv.imwrite('camera%dimage%02d.jpg' % (i%2,int(i/2)), img)
+        cv.imwrite('camera%dimage%05d.jpg' % (i%2,int(i/2)), img)
         store_time(i%2,imagetime)
         stream.seek(0)
         stream.truncate()
