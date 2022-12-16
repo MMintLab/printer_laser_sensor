@@ -4,6 +4,8 @@ import time
 from PIL import Image
 import PIL.ImageOps as imops
 import io
+import cv2 as cv
+import numpy as np
 
 camera = PiCamera(resolution=(150, 150), framerate=100)
 # Wait for the automatic gain control to settle
@@ -25,9 +27,10 @@ def outputs(numphotos):
     stream = io.BytesIO()
     for i in range(numphotos):
         yield stream
-        img = Image.open(stream)
+        file_bytes = np.asarray(bytearray(stream.read()), dtype=np.uint8)
+        img = cv.imdecode(file_bytes, cv.IMREAD_COLOR)
         print('inverted')
-        img2 = imops.invert(img)
+        img2 = cv2.bitwise_not(img)
         img2.save('image%d.jpg' % i)
         stream.seek(0)
         stream.truncate()
