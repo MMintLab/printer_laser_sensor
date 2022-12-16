@@ -52,7 +52,7 @@ def outputs(numphotos,i2cbus):
         print('inverted')
         img2 = img[:, :, 2]
         #save image
-        cv.imwrite('image%2i.jpg' % i, img2)
+        cv.imwrite('image%02d.jpg' % i, img2)
         stream.seek(0)
         stream.truncate()
 
