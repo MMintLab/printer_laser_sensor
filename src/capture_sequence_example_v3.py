@@ -27,10 +27,10 @@ def outputs(numphotos):
     stream = io.BytesIO()
     for i in range(numphotos):
         yield stream
-        img = cv.imdecode(stream, cv.IMREAD_COLOR)
+        img = cv.imdecode(np.frombuffer(stream.read(), np.uint8), 1)
         print('inverted')
-        img2 = cv.bitwise_not(img)
-        img2.save('image%d.jpg' % i)
+        #img2 = cv.bitwise_not(img)
+        img.save('image%d.jpg' % i)
         stream.seek(0)
         stream.truncate()
 
