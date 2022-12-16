@@ -13,6 +13,10 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT)
 GPIO.setup(17, GPIO.OUT)
 
+SMBus(1).write_byte_data(0x70, 0x00, 0x01)
+GPIO.output(4, GPIO.LOW)
+GPIO.output(17, GPIO.LOW)
+
 def switch_camera():
     if GPIO.input(4):
         SMBus(1).write_byte_data(0x70, 0x00, 0x01)
@@ -47,12 +51,12 @@ def outputs(numphotos):
         data = np.frombuffer(stream.getvalue(), dtype=np.uint8)
         img = cv.imdecode(data, 1)
         print('inverted')
-        img2 = cv.bitwise_not(img)
+        img2 = img[:, :, 2]
         #save image
         cv.imwrite('image%d.jpg' % i, img2)
+        switch_camera()
         stream.seek(0)
         stream.truncate()
-        switch_camera()
 
 # Now fix the values
 # Finally, take several photos with the fixed settings
