@@ -14,6 +14,8 @@ capture_framerate = 20
 
 desired_duration = int(sys.argv[1])
 
+testnumber = int(sys.argv[2])
+
 numpics = int(desired_duration*capture_framerate)
 
 #announce how many pictures will be taken
@@ -69,7 +71,7 @@ print(camera.awb_mode)
 print(camera.shutter_speed)
 print(camera.exposure_mode)
 
-def outputs(numphotos,i2cbus,starttime):
+def outputs(numphotos,i2cbus,starttime,testnumber):
     stream = io.BytesIO()
     for i in range(numphotos):
         yield stream
@@ -78,7 +80,7 @@ def outputs(numphotos,i2cbus,starttime):
         imagetime = time.time()-starttime
         data = np.frombuffer(stream.getvalue(), dtype=np.uint8)
         img = cv.imdecode(data, 1)
-        cv.imwrite('camera%dimage%05d.jpg' % (i%2,int(i/2)), img)
+        cv.imwrite('test%02dcamera%dimage%05d.jpg' % (testnumber, i%2,int(i/2)), img)
         store_time(i%2,imagetime)
         stream.seek(0)
         stream.truncate()
@@ -86,7 +88,7 @@ def outputs(numphotos,i2cbus,starttime):
 # Now fix the values
 # Finally, take several photos with the fixed settings
 starttime = time.time()
-camera.capture_sequence(outputs(numpics,i2cbus,starttime),use_video_port=True,burst=False)
+camera.capture_sequence(outputs(numpics,i2cbus,starttime,testnumber),use_video_port=True,burst=False)
 print(time.time()-starttime)
 camera.close()
 GPIO.cleanup()
