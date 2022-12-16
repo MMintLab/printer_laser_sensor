@@ -27,6 +27,7 @@ else:
 def switch_camera():
     print("switching camera")
     if GPIO.input(4):
+        print("4 is high")
         SMBus(1).write_byte_data(0x70, 0x00, 0x01)
         GPIO.output(4, GPIO.LOW)
         GPIO.output(17, GPIO.LOW)
