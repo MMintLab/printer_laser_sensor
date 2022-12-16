@@ -45,6 +45,7 @@ def outputs(numphotos,i2cbus):
     stream = io.BytesIO()
     for i in range(numphotos):
         yield stream
+        switch_camera(i%2,i2cbus)
         #get image from stream in opencv format
         data = np.frombuffer(stream.getvalue(), dtype=np.uint8)
         img = cv.imdecode(data, 1)
@@ -52,10 +53,6 @@ def outputs(numphotos,i2cbus):
         img2 = img[:, :, 2]
         #save image
         cv.imwrite('image%d.jpg' % i, img2)
-        if i>numphotos/2:
-            switch_camera(0,i2cbus)
-        else:
-            switch_camera(1,i2cbus)
         stream.seek(0)
         stream.truncate()
 
