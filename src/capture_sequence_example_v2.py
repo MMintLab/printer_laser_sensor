@@ -25,10 +25,10 @@ def outputs(numphotos):
     stream = io.BytesIO()
     for i in range(numphotos):
         yield stream
-        #img = Image.open(stream)
+        img = Image.open(stream)
         print('inverted')
         #img2 = imops.invert(img)
-        #img2.save('image%d.jpg' % i)
+        img.save('image%d.jpg' % i)
         stream.seek(0)
         stream.truncate()
 
