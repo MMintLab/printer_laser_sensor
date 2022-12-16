@@ -28,7 +28,7 @@ def outputs(numphotos):
         img = Image.open(stream)
         print('inverted')
         img2 = imops.invert(img)
-        #img.save('image%d.jpg' % i)
+        img2.save('image%d.jpg' % i)
         stream.seek(0)
         stream.truncate()
 
