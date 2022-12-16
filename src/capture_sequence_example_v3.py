@@ -23,11 +23,15 @@ print(camera.exposure_mode)
 
 sleep(2)
 
+
+
 def outputs(numphotos):
     stream = io.BytesIO()
     for i in range(numphotos):
         yield stream
-        img = cv.imdecode(np.frombuffer(stream.read(), np.uint8), 1)
+        #get image from stream in opencv format
+        data = np.fromstring(stream.getvalue(), dtype=np.uint8)
+        img = cv.imdecode(data, 1)
         print('inverted')
         #img2 = cv.bitwise_not(img)
         img.save('image%d.jpg' % i)
