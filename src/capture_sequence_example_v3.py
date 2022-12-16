@@ -6,6 +6,18 @@ import PIL.ImageOps as imops
 import io
 import cv2 as cv
 import numpy as np
+import RPi.GPIO as GPIO
+from smbus import SMBus
+
+def switch_camera():
+    if GPIO.input(4):
+        SMBus(1).write_byte_data(0x70, 0x00, 0x01)
+        GPIO.output(4, GPIO.LOW)
+        GPIO.output(17, GPIO.LOW)
+    else:
+        SMBus(1).write_byte_data(0x70, 0x00, 0x02)
+        GPIO.output(4, GPIO.HIGH)
+        GPIO.output(17, GPIO.LOW)
 
 camera = PiCamera(resolution=(150, 150), framerate=100)
 # Wait for the automatic gain control to settle
@@ -38,6 +50,7 @@ def outputs(numphotos):
         cv.imwrite('image%d.jpg' % i, img2)
         stream.seek(0)
         stream.truncate()
+        switch_camera()
 
 # Now fix the values
 # Finally, take several photos with the fixed settings

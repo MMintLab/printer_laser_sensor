@@ -33,12 +33,12 @@ def switch_camera(desired_camera,i2cbus):
 
 #take picture with raspberry pi camera
 def take_picture(camera,frame_number,camera_name):
-    camera.resolution = (1280, 720)
     camera.capture(camera_name+'_frame'+str(frame_number)+'.jpg')
 
 time.sleep(2)
 
 camera = PiCamera()
+camera.resolution = (1280, 720)
 
 try:
     for frame_number in range(0,end_frame):
