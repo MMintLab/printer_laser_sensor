@@ -30,12 +30,12 @@ def outputs(numphotos):
     for i in range(numphotos):
         yield stream
         #get image from stream in opencv format
-        data = np.fromstring(stream.getvalue(), dtype=np.uint8)
+        data = np.frombuffer(stream.getvalue(), dtype=np.uint8)
         img = cv.imdecode(data, 1)
         print('inverted')
-        #img2 = cv.bitwise_not(img)
+        img2 = cv.bitwise_not(img)
         #save image
-        cv.imwrite('image%d.jpg' % i, img)
+        cv.imwrite('image%d.jpg' % i, img2)
         stream.seek(0)
         stream.truncate()
 
