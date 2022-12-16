@@ -13,14 +13,16 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT)
 GPIO.setup(17, GPIO.OUT)
 
+i2cbus = SMBus(1)
+
 maincamera = 0
 
 if maincamera == 0:
-    SMBus(1).write_byte_data(0x70, 0x00, 0x01)
+    i2cbus.write_byte_data(0x70, 0x00, 0x01)
     GPIO.output(4, GPIO.LOW)
     GPIO.output(17, GPIO.LOW)
 else:
-    SMBus(1).write_byte_data(0x70, 0x00, 0x02)
+    i2cbus.write_byte_data(0x70, 0x00, 0x02)
     GPIO.output(4, GPIO.HIGH)
     GPIO.output(17, GPIO.LOW)
 
@@ -28,12 +30,12 @@ def switch_camera():
     print("switching camera")
     if GPIO.input(4):
         print("4 is high")
-        SMBus(1).write_byte_data(0x70, 0x00, 0x01)
+        i2cbus.write_byte_data(0x70, 0x00, 0x01)
         GPIO.output(4, GPIO.LOW)
         GPIO.output(17, GPIO.LOW)
     else:
         print("4 is low")
-        SMBus(1).write_byte_data(0x70, 0x00, 0x02)
+        i2cbus.write_byte_data(0x70, 0x00, 0x02)
         GPIO.output(4, GPIO.HIGH)
         GPIO.output(17, GPIO.LOW)
 
