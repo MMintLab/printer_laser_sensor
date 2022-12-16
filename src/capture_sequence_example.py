@@ -1,32 +1,16 @@
-import io
-import time
-import picamera
+from time import sleep
+from picamera import PiCamera
 
-from PIL import Image
-
-with picamera.PiCamera() as camera:
-    # Set the camera's resolution to VGA @40fps and give it a couple
-    # of seconds to measure exposure etc.
-    camera.resolution = (640, 720)
-    camera.framerate = 80
-    camera.rotation = 0
-    time.sleep(2)
-    # Set up 40 in-memory streams
-    outputs = [io.BytesIO() for i in range(40)]
-    start = time.time()
-    print("before capture")
-    camera.capture_sequence(outputs, 'jpeg', use_video_port=True)
-    print("after capture")
-    finish = time.time()
-    # How fast were we?
-    print('Captured 40 images at %.2ffps' % (40 / (finish - start)))
-
-    count = 0
-    for frameData in outputs:
-        rawIO = frameData
-        rawIO.seek(0)
-        byteImg = Image.open(rawIO)
-
-        count += 1
-        filename = "testimage" + str(count) + ".jpg"
-        byteImg.save(filename, 'JPEG')
+camera = PiCamera(resolution=(1280, 720), framerate=30)
+# Set ISO to the desired value
+camera.iso = 100
+# Wait for the automatic gain control to settle
+sleep(2)
+# Now fix the values
+camera.shutter_speed = camera.exposure_speed
+camera.exposure_mode = 'off'
+g = camera.awb_gains
+camera.awb_mode = 'off'
+camera.awb_gains = g
+# Finally, take several photos with the fixed settings
+camera.capture_sequence(['image%d.jpg' % i for i in range(10)])
