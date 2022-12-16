@@ -5,9 +5,9 @@ from PIL import Image
 import PIL.ImageOps as imops
 import io
 
-camera = PiCamera(resolution=(200, 200), framerate=80)
+camera = PiCamera(resolution=(150, 150), framerate=100)
 # Wait for the automatic gain control to settle
-camera.shutter_speed = 5000
+camera.shutter_speed = 2000
 
 #display camera fields
 print(camera.resolution)
