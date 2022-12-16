@@ -30,7 +30,7 @@ def outputs(numphotos):
         file_bytes = np.asarray(bytearray(stream.read()), dtype=np.uint8)
         img = cv.imdecode(file_bytes, cv.IMREAD_COLOR)
         print('inverted')
-        img2 = cv2.bitwise_not(img)
+        img2 = cv.bitwise_not(img)
         img2.save('image%d.jpg' % i)
         stream.seek(0)
         stream.truncate()
