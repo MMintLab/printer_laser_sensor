@@ -8,6 +8,7 @@ camera.iso = 100
 sleep(2)
 # Now fix the values
 camera.shutter_speed = camera.exposure_speed
+print(camera.shutter_speed)
 camera.exposure_mode = 'off'
 g = camera.awb_gains
 camera.awb_mode = 'off'
