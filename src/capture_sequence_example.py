@@ -20,6 +20,6 @@ sleep(2)
 # Now fix the values
 # Finally, take several photos with the fixed settings
 starttime = time.time()
-camera.capture_sequence(['image%d.jpg' % i for i in range(10)])
+camera.capture_sequence(['image%d.jpg' % i for i in range(10)],use_video_port=True)
 print(time.time()-starttime)
 camera.close()
