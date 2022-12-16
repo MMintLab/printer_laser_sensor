@@ -14,8 +14,9 @@ with picamera.PiCamera() as camera:
     # Set up 40 in-memory streams
     outputs = [io.BytesIO() for i in range(40)]
     start = time.time()
+    print("before capture")
     camera.capture_sequence(outputs, 'jpeg', use_video_port=True)
-
+    print("after capture")
     finish = time.time()
     # How fast were we?
     print('Captured 40 images at %.2ffps' % (40 / (finish - start)))
