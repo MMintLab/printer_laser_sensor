@@ -15,28 +15,14 @@ GPIO.setup(17, GPIO.OUT)
 
 i2cbus = SMBus(1)
 
-maincamera = 0
-
-if maincamera == 0:
-    i2cbus.write_byte_data(0x70, 0x00, 0x01)
-    GPIO.output(4, GPIO.LOW)
-    GPIO.output(17, GPIO.LOW)
-else:
-    i2cbus.write_byte_data(0x70, 0x00, 0x02)
-    GPIO.output(4, GPIO.HIGH)
-    GPIO.output(17, GPIO.LOW)
-
-def switch_camera():
-    print("switching camera")
-    if GPIO.input(4):
-        print("4 is high")
-        i2cbus.write_byte_data(0x70, 0x00, 0x01)
-        GPIO.output(4, GPIO.LOW)
-        GPIO.output(17, GPIO.LOW)
-    else:
-        print("4 is low")
+def switch_camera(desired_camera,i2cbus):
+    if desired_camera==1:
         i2cbus.write_byte_data(0x70, 0x00, 0x02)
         GPIO.output(4, GPIO.HIGH)
+        GPIO.output(17, GPIO.LOW)
+    elif desired_camera==0:
+        i2cbus.write_byte_data(0x70, 0x00, 0x01)
+        GPIO.output(4, GPIO.LOW)
         GPIO.output(17, GPIO.LOW)
 
 camera = PiCamera(resolution=(150, 150), framerate=100)
@@ -55,7 +41,7 @@ print(camera.exposure_mode)
 
 sleep(2)
 
-def outputs(numphotos):
+def outputs(numphotos,i2cbus):
     stream = io.BytesIO()
     for i in range(numphotos):
         yield stream
@@ -66,13 +52,17 @@ def outputs(numphotos):
         img2 = img[:, :, 2]
         #save image
         cv.imwrite('image%d.jpg' % i, img2)
-        switch_camera()
+        if i>numphotos/2:
+            switch_camera(0,i2cbus)
+        else:
+            switch_camera(1,i2cbus)
         stream.seek(0)
         stream.truncate()
 
 # Now fix the values
 # Finally, take several photos with the fixed settings
 starttime = time.time()
-camera.capture_sequence(outputs(10),use_video_port=True,burst=False)
+camera.capture_sequence(outputs(10,i2cbus),use_video_port=True,burst=False)
 print(time.time()-starttime)
 camera.close()
+GPIO.cleanup()
