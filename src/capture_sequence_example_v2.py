@@ -3,6 +3,7 @@ from picamera import PiCamera
 import time
 from PIL import Image
 import PIL.ImageOps as imops
+import io
 
 camera = PiCamera(resolution=(640, 480), framerate=80)
 # Wait for the automatic gain control to settle
