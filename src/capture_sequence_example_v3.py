@@ -12,9 +12,12 @@ import sys
 
 capture_framerate = 20
 
-desired_duration = sys.argv[1]
+desired_duration = int(sys.argv[1])
 
 numpics = int(desired_duration*capture_framerate)
+
+#announce how many pictures will be taken
+print('Taking '+str(numpics)+' pictures')
 
 #clear files to write to
 f0 = open('camera0time.txt','w')
