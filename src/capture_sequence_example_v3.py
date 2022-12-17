@@ -81,5 +81,3 @@ camera.capture_sequence(outputs(numpics,i2cbus,starttime,testnumber),use_video_p
 print(time.time()-starttime)
 camera.close()
 GPIO.cleanup()
-f1.close()
-f0.close()
