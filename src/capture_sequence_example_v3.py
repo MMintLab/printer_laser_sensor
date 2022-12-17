@@ -21,23 +21,12 @@ numpics = int(desired_duration*capture_framerate)
 #announce how many pictures will be taken
 print('Taking '+str(numpics)+' pictures')
 
-#clear files to write to
-f0 = open('camera0time.txt','w')
-f1 = open('camera1time.txt','w')
-f0.close()
-f1.close()
-
-#open file to write to
-f0 = open('camera0time.txt','a')
-f1 = open('camera1time.txt','a')
-
 #store time values in file
-def store_time(camera_number,imagetime):
-    if camera_number==0:
-        f0.write(str(imagetime)+'\n')
-    elif camera_number==1:
-        f1.write(str(imagetime)+'\n')
-
+def store_time(camera_number,imagetime,testnumber):
+    #clear files to write to
+    f = open('test%02dcamera%dtime.txt' % (testnumber,camera_number), 'a')
+    f.write(str(imagetime))
+    f.close()
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT)
@@ -81,7 +70,7 @@ def outputs(numphotos,i2cbus,starttime,testnumber):
         data = np.frombuffer(stream.getvalue(), dtype=np.uint8)
         img = cv.imdecode(data, 1)
         cv.imwrite('test%02dcamera%dimage%05d.jpg' % (testnumber, i%2,int(i/2)), img)
-        store_time(i%2,imagetime)
+        store_time(i%2,imagetime,testnumber)
         stream.seek(0)
         stream.truncate()
 
