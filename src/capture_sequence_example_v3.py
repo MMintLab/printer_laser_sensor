@@ -26,6 +26,7 @@ def store_time(camera_number,imagetime,testnumber):
     #clear files to write to
     f = open('test%02dcamera%dtime.txt' % (testnumber,camera_number), 'a')
     f.write(str(imagetime))
+    f.write('\n')
     f.close()
 
 GPIO.setmode(GPIO.BCM)

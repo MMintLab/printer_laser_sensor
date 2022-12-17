@@ -3,6 +3,8 @@ from picamera import PiCamera
 
 camera = PiCamera(resolution=(1280, 720), framerate=30)
 
+camera.shutter_speed = 10000
+
 #display camera fields
 print(camera.resolution)
 print(camera.framerate)
