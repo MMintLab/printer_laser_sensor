@@ -53,6 +53,7 @@ camera = PiCamera(resolution=(200, 200), framerate=capture_framerate)
 sleep(2)
 camera.shutter_speed = 50000
 camera.zoom = (0.3,0.3,0.4,0.4)
+camera.iso = 200
 
 #display camera fields
 print(camera.resolution)
