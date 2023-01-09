@@ -10,7 +10,7 @@ import RPi.GPIO as GPIO
 from smbus import SMBus
 import sys
 
-capture_framerate = 10
+capture_framerate = 5
 
 desired_duration = int(sys.argv[1])
 
