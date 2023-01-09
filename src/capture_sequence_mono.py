@@ -47,7 +47,7 @@ def switch_camera(desired_camera,i2cbus):
         GPIO.output(4, GPIO.LOW)
         GPIO.output(17, GPIO.LOW)
 
-camera = PiCamera(resolution=(300, 300), framerate=capture_framerate, iso = 200, zoom = (0.3,0.3,0.4,0.4))
+camera = PiCamera(resolution=(300, 300), framerate=capture_framerate, zoom = (0.3,0.3,0.4,0.4))
 # Wait for the automatic gain control to settle
 
 sleep(2)
