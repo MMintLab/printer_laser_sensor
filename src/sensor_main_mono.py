@@ -132,6 +132,8 @@ def outputs(i2cbus,starttime):
         red_channel, green_channel, blue_channel, sat_channel, value_channel, lum_channel = get_channels(image)
         laser_seg_image = laser_seg(red_channel,green_channel,blue_channel,sat_channel,value_channel,lum_channel)
         nozzle_seg_image = nozzle_seg(red_channel,green_channel,blue_channel,sat_channel)
+        cv2.imshow('nozzle_seg',nozzle_seg_image)
+        cv2.imshow('laser_seg',laser_seg_image)
         #get vertical coordinate of highest white pixel in nozzle_seg_image
         nozzle_column_sum = np.sum(nozzle_seg_image,axis=1)
         #get lowest index of nonzero element in nozzle_column_sum
