@@ -12,9 +12,9 @@ import rospy
 import sys
 from std_msgs.msg import Float32
 #standard messages uint8 image import
-from sensor_msgs.msg import Image
+from std_msgs.msg import UInt8MultiArray
 
-pub_im = rospy.Publisher('/camera_image', Image, queue_size=1)
+pub_im = rospy.Publisher('/camera_image', UInt8MultiArray, queue_size=1)
 rospy.init_node('sensor_node')
 
 def laser_seg(R,G,B,S,V,L):
