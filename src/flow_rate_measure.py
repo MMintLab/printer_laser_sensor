@@ -31,7 +31,7 @@ def nozzle_seg(R,G,B,S):
     max_val = np.max(output)
     min_val = np.min(output)
     middle = 3*(max_val+min_val)/4
-    output[output>middle] = 1
+    #output[output>middle] = 1
     output[output<=middle] = 0
     return output
 
@@ -43,22 +43,16 @@ def get_channels(image):
     #get red, green, blue, saturation, value, and luminance channels
     red_channel = image[:,:,2]
     red_channel = red_channel/255
-
     green_channel = image[:,:,1]
     green_channel = green_channel/255
-
     blue_channel = image[:,:,0]
     blue_channel = blue_channel/255
-
     sat_channel = hsl_image[:,:,2]
     sat_channel = sat_channel/255
-
     value_channel = hsv_image[:,:,2]
     value_channel = value_channel/255
-
     lum_channel = hsl_image[:,:,1]
     lum_channel = lum_channel/255
-
     return red_channel, green_channel, blue_channel, sat_channel, value_channel, lum_channel
 
 #get sorted list of all files in data_foler beginning with test_[test_number] and ending with .jpg
@@ -125,7 +119,14 @@ for j in range(len(test_numbers)):
         image = cv2.imread(data_folder+'/'+filename_list[i])
         red_channel, green_channel, blue_channel, sat_channel, value_channel, lum_channel = get_channels(image)
         laser_seg_image = laser_seg(red_channel,green_channel,blue_channel,sat_channel,value_channel,lum_channel)
-        nozzle_seg_image = nozzle_seg(red_channel,green_channel,blue_channel,sat_channel)
+        #nozzle_seg_image = nozzle_seg(red_channel,green_channel,blue_channel,sat_channel)
+        print(np.max(laser_seg_image))
+        print(np.min(laser_seg_image))
+        #print(np.max(nozzle_seg_image))
+        #print(np.min(nozzle_seg_image))
+        cv2.imshow('laser_seg_image',laser_seg_image)
+        #cv2.imshow('nozzle_seg_image',nozzle_seg_image)
+        cv2.waitKey(0)
         #get vertical coordinate of highest white pixel in nozzle_seg_image
         nozzle_column_sum = np.sum(nozzle_seg_image,axis=1)
         #get lowest index of nonzero element in nozzle_column_sum
@@ -154,8 +155,8 @@ for j in range(len(test_numbers)):
         #get time of image
         #plot highest intensity pixel indices vs column number
         #show laser_seg_image with cv2
-        cv2.imshow('nozzle_seg_image',nozzle_seg_image)
-        cv2.imshow('laser_seg_image',laser_seg_image)
+        cv2.imshow('nozzle_seg',nozzle_seg_image)
+        cv2.imshow('laser_seg',laser_seg_image)
         #plt.figure(figsize=(2,2))
         #plt.plot(np.linspace(start=0, stop=image.shape[1]-1-running_average_number, num=image.shape[1]-running_average_number, axis=0),highest_intensity_pixel_indices[0,:])
         #plt.xlabel('Column Number of Image')

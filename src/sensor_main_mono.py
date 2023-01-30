@@ -11,8 +11,10 @@ from smbus import SMBus
 import rospy
 import sys
 from std_msgs.msg import Float32
+#standard messages uint8 image import
+from sensor_msgs.msg import Image
 
-pub = rospy.Publisher('/bead_area', Float32, queue_size=1)
+pub_im = rospy.Publisher('/camera_image', Image, queue_size=1)
 rospy.init_node('sensor_node')
 
 def laser_seg(R,G,B,S,V,L):
@@ -129,42 +131,42 @@ def outputs(i2cbus,starttime):
         data = np.frombuffer(stream.getvalue(), dtype=np.uint8)
         image = cv2.imdecode(data, 1)
         #get channels
-        red_channel, green_channel, blue_channel, sat_channel, value_channel, lum_channel = get_channels(image)
-        laser_seg_image = laser_seg(red_channel,green_channel,blue_channel,sat_channel,value_channel,lum_channel)
-        nozzle_seg_image = nozzle_seg(red_channel,green_channel,blue_channel,sat_channel)
-        cv2.imshow('nozzle_seg',nozzle_seg_image)
-        cv2.imshow('laser_seg',laser_seg_image)
+        #red_channel, green_channel, blue_channel, sat_channel, value_channel, lum_channel = get_channels(image)
+        #laser_seg_image = laser_seg(red_channel,green_channel,blue_channel,sat_channel,value_channel,lum_channel)
+        #nozzle_seg_image = nozzle_seg(red_channel,green_channel,blue_channel,sat_channel)
+        #cv2.imshow('nozzle_seg',nozzle_seg_image)
+        #cv2.imshow('laser_seg',laser_seg_image)
         #get vertical coordinate of highest white pixel in nozzle_seg_image
-        nozzle_column_sum = np.sum(nozzle_seg_image,axis=1)
+        #nozzle_column_sum = np.sum(nozzle_seg_image,axis=1)
         #get lowest index of nonzero element in nozzle_column_sum
-        nozzle_index = np.nonzero(nozzle_column_sum)[0][0]
+        #nozzle_index = np.nonzero(nozzle_column_sum)[0][0]
         #print(nozzle_index)
         #crop laser_seg_image to only include pixels above nozzle
-        laser_seg_image = laser_seg_image[0:nozzle_index,:]
+        #laser_seg_image = laser_seg_image[0:nozzle_index,:]
         #show image
-        print(laser_seg_image.shape)
-        cv2.imshow('vision',laser_seg_image/255000000)
+        print(image.shape)
+        cv2.imshow('vision',image)
         cv2.waitKey(1)
         #get highest intensity pixel in each column of laser_seg_image
-        highest_intensity_pixel_indices = get_highest_intensity_pixel_indices(laser_seg_image)
+        #highest_intensity_pixel_indices = get_highest_intensity_pixel_indices(laser_seg_image)
         #get average of last 4 highest intensity pixel indices
-        y2 = np.mean(highest_intensity_pixel_indices[0,-4:])
+        #y2 = np.mean(highest_intensity_pixel_indices[0,-4:])
         #get average of first 4 highest intensity pixel indices
-        y1 = np.mean(highest_intensity_pixel_indices[0,0:4])
+        #y1 = np.mean(highest_intensity_pixel_indices[0,0:4])
         #get average of last 4 column numbers
-        x2 = np.mean(np.linspace(start=image.shape[1]-4, stop=image.shape[1]-1, num=4, axis=0))
+        #x2 = np.mean(np.linspace(start=image.shape[1]-4, stop=image.shape[1]-1, num=4, axis=0))
         #get average of first 4 column numbers
-        x1 = np.mean(np.linspace(start=0, stop=3, num=4, axis=0))
+        #x1 = np.mean(np.linspace(start=0, stop=3, num=4, axis=0))
         #get slope of line connecting (x1,y1) and (x2,y2)
-        slope = (y2-y1)/(x2-x1)
+        #slope = (y2-y1)/(x2-x1)
         #subtract slope times column number from highest intensity pixel indices
-        highest_intensity_pixel_indices = highest_intensity_pixel_indices - slope*np.linspace(start=0, stop=image.shape[1]-1, num=image.shape[1], axis=0)
+        #highest_intensity_pixel_indices = highest_intensity_pixel_indices - slope*np.linspace(start=0, stop=image.shape[1]-1, num=image.shape[1], axis=0)
         #running average of highest intensity pixel indices
-        highest_intensity_pixel_indices = running_average(highest_intensity_pixel_indices,N=running_average_number)
-        highest_intensity_pixel_indices = highest_intensity_pixel_indices - np.min(highest_intensity_pixel_indices)
-        bead_area = np.sum(highest_intensity_pixel_indices)
-        print(bead_area)
-        pub.publish(bead_area)
+        #highest_intensity_pixel_indices = running_average(highest_intensity_pixel_indices,N=running_average_number)
+        #highest_intensity_pixel_indices = highest_intensity_pixel_indices - np.min(highest_intensity_pixel_indices)
+        #bead_area = np.sum(highest_intensity_pixel_indices)
+        #print(bead_area)
+        pub_im.publish(image)
         stream.seek(0)
         stream.truncate()
 
