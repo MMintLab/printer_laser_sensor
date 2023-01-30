@@ -142,8 +142,9 @@ def outputs(i2cbus,starttime):
         #crop laser_seg_image to only include pixels above nozzle
         laser_seg_image = laser_seg_image[0:nozzle_index,:]
         #show image
-        cv2.imshow('vision',laser_seg_image)
-        cv2.waitKey(1)
+        print(laser_seg_image.shape)
+        #cv2.imshow('vision',laser_seg_image)
+        #cv2.waitKey(1)
         #get highest intensity pixel in each column of laser_seg_image
         highest_intensity_pixel_indices = get_highest_intensity_pixel_indices(laser_seg_image)
         #get average of last 4 highest intensity pixel indices
@@ -162,6 +163,7 @@ def outputs(i2cbus,starttime):
         highest_intensity_pixel_indices = running_average(highest_intensity_pixel_indices,N=running_average_number)
         highest_intensity_pixel_indices = highest_intensity_pixel_indices - np.min(highest_intensity_pixel_indices)
         bead_area = np.sum(highest_intensity_pixel_indices)
+        print(bead_area)
         pub.publish(bead_area)
         stream.seek(0)
         stream.truncate()
