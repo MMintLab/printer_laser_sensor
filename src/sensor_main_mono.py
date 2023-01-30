@@ -10,6 +10,7 @@ import RPi.GPIO as GPIO
 from smbus import SMBus
 import rospy
 import sys
+from std_msgs.msg import Float32
 
 pub = rospy.Publisher('/bead_area', Float32, queue_size=1)
 rospy.init_node('sensor_node')
