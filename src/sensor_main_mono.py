@@ -121,6 +121,7 @@ print(camera.exposure_mode)
 switch_camera(desired_camera_arg,i2cbus)
 
 def outputs(i2cbus,starttime):
+    running_average_number = 10
     stream = io.BytesIO()
     while not rospy.is_shutdown():
         yield stream
@@ -139,6 +140,9 @@ def outputs(i2cbus,starttime):
         #print(nozzle_index)
         #crop laser_seg_image to only include pixels above nozzle
         laser_seg_image = laser_seg_image[0:nozzle_index,:]
+        #show image
+        cv2.imshow('vision',laser_seg_image)
+        cv2.waitKey(1)
         #get highest intensity pixel in each column of laser_seg_image
         highest_intensity_pixel_indices = get_highest_intensity_pixel_indices(laser_seg_image)
         #get average of last 4 highest intensity pixel indices
