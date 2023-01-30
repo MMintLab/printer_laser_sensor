@@ -169,7 +169,7 @@ def outputs(i2cbus,starttime):
 # Now fix the values
 # Finally, take several photos with the fixed settings
 starttime = time.time()
-camera.capture_continuous(outputs(i2cbus,starttime),use_video_port=True,burst=False)
+camera.capture_sequence(outputs(i2cbus,starttime),use_video_port=True,burst=False)
 print(time.time()-starttime)
 camera.close()
 GPIO.cleanup()
