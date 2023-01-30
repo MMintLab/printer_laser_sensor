@@ -16,10 +16,13 @@ pub = rospy.Publisher('/bead_area', Float32, queue_size=1)
 rospy.init_node('sensor_node')
 
 def laser_seg(R,G,B,S,V,L):
-    weights = np.array([[2.77323259],[-4.28669185],[2.87523104],[-0.40948264],[-2.14548059],[0.69278767],[1.30010453]])
+    #weights = np.array([[2.77323259],[-4.28669185],[2.87523104],[-0.40948264],[-2.14548059],[0.69278767],[1.30010453]])
+    #divided by 255: weights = np.array([[0.010875421921568628],[-0.016810556274509805],[0.011275415843137255],[-0.0016058142745098039],[-0.00841364937254902],[1.0654174086889657e-05],[1.9993918185313344e-05]])
+    #integer weights multiplied by 1000000
+    weights = np.array([[10875],[-16811],[11275],[-1606],[-8414],[11],[20]])
     output = L*(weights[0,0]*R + weights[1,0]*G + weights[2,0]*B + weights[3,0]*S + weights[4,0]*V + weights[5,0]*S*V + weights[6,0]*S*L)
     #clip output to be between 0 and 1
-    output[output>1] = 1
+    output[output>255000000] = 255000000
     output[output<0] = 0
     max_val = np.max(output)
     min_val = np.min(output)
@@ -29,10 +32,11 @@ def laser_seg(R,G,B,S,V,L):
     return output
 
 def nozzle_seg(R,G,B,S):
-    weights = np.array([[-1.18942075],[2.44500537],[-1.3129521],[4.140930960918501],[-2.885439160129449]])
+    #weights = np.array([[-1.18942075],[2.44500537],[-1.3129521],[4.140930960918501],[-2.885439160129449]])
+    weights = np.array([[-4664],[9588],[-5149],[4141],[-11]])
     output = weights[3,0]*(weights[0,0]*R + weights[1,0]*G + weights[2,0]*B)+weights[4,0]*S*(weights[0,0]*R + weights[1,0]*G + weights[2,0]*B)
     #clip output to be between 0 and 1
-    output[output>1] = 1
+    output[output>1000000000] = 1000000000
     output[output<0] = 0
     max_val = np.max(output)
     min_val = np.min(output)
@@ -48,22 +52,16 @@ def get_channels(image):
     hsl_image = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
     #get red, green, blue, saturation, value, and luminance channels
     red_channel = image[:,:,2]
-    red_channel = red_channel/255
 
     green_channel = image[:,:,1]
-    green_channel = green_channel/255
 
     blue_channel = image[:,:,0]
-    blue_channel = blue_channel/255
 
     sat_channel = hsl_image[:,:,2]
-    sat_channel = sat_channel/255
 
     value_channel = hsv_image[:,:,2]
-    value_channel = value_channel/255
 
     lum_channel = hsl_image[:,:,1]
-    lum_channel = lum_channel/255
 
     return red_channel, green_channel, blue_channel, sat_channel, value_channel, lum_channel
 
@@ -143,7 +141,7 @@ def outputs(i2cbus,starttime):
         laser_seg_image = laser_seg_image[0:nozzle_index,:]
         #show image
         print(laser_seg_image.shape)
-        cv2.imshow('vision',laser_seg_image)
+        cv2.imshow('vision',laser_seg_image/255000000)
         cv2.waitKey(1)
         #get highest intensity pixel in each column of laser_seg_image
         highest_intensity_pixel_indices = get_highest_intensity_pixel_indices(laser_seg_image)
