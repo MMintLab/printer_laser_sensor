@@ -143,8 +143,8 @@ def outputs(i2cbus,starttime):
         laser_seg_image = laser_seg_image[0:nozzle_index,:]
         #show image
         print(laser_seg_image.shape)
-        #cv2.imshow('vision',laser_seg_image)
-        #cv2.waitKey(1)
+        cv2.imshow('vision',laser_seg_image)
+        cv2.waitKey(1)
         #get highest intensity pixel in each column of laser_seg_image
         highest_intensity_pixel_indices = get_highest_intensity_pixel_indices(laser_seg_image)
         #get average of last 4 highest intensity pixel indices
