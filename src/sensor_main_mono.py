@@ -124,7 +124,7 @@ switch_camera(desired_camera_arg,i2cbus)
 def outputs(i2cbus,starttime):
     running_average_number = 10
     stream = io.BytesIO()
-    while not rospy.is_shutdown():
+    while True:
         yield stream
         #get image from stream in opencv format
         imagetime = time.time()-starttime
