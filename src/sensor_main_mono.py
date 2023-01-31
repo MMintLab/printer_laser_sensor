@@ -13,6 +13,7 @@ import sys
 from std_msgs.msg import Float32
 #sensor messages image
 from sensor_msgs.msg import Image
+from cv_bridge import CvBridge, CvBridgeError
 
 pub_im = rospy.Publisher('/camera_image', Image, queue_size=1)
 rospy.init_node('sensor_node')
@@ -130,6 +131,8 @@ def outputs(i2cbus,starttime):
         imagetime = time.time()-starttime
         data = np.frombuffer(stream.getvalue(), dtype=np.uint8)
         image = cv2.imdecode(data, 1)
+        #convert to image message
+        image_message = CvBridge().cv2_to_imgmsg(image)
         #get channels
         #red_channel, green_channel, blue_channel, sat_channel, value_channel, lum_channel = get_channels(image)
         #laser_seg_image = laser_seg(red_channel,green_channel,blue_channel,sat_channel,value_channel,lum_channel)
@@ -166,7 +169,7 @@ def outputs(i2cbus,starttime):
         #highest_intensity_pixel_indices = highest_intensity_pixel_indices - np.min(highest_intensity_pixel_indices)
         #bead_area = np.sum(highest_intensity_pixel_indices)
         #print(bead_area)
-        pub_im.publish(image)
+        pub_im.publish(image_message)
         stream.seek(0)
         stream.truncate()
 
