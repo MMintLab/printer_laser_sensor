@@ -11,10 +11,10 @@ from smbus import SMBus
 import rospy
 import sys
 from std_msgs.msg import Float32
-#standard messages uint8 image import
-from std_msgs.msg import UInt8
+#sensor messages image
+from sensor_msgs.msg import Image
 
-pub_im = rospy.Publisher('/camera_image', UInt8, queue_size=1)
+pub_im = rospy.Publisher('/camera_image', Image, queue_size=1)
 rospy.init_node('sensor_node')
 
 def laser_seg(R,G,B,S,V,L):
