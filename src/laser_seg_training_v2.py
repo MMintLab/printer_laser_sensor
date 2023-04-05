@@ -21,6 +21,31 @@ for i in range(len(output_filenames)):
 #eliminate all elements of output_filenames except for the first five
 #output_filenames = output_filenames[0:9]
 
+def domain_randomization(input_image,output_image,gradient,N):
+    for i in range(N):
+        #randomize the domain of the input image with slight changes in brightness, contrast, gamma, saturation, exposure, and white balance
+        #randomize contrast
+        contrast = np.random.uniform(0.5,1.5)
+        input_image_i = cv2.convertScaleAbs(input_image, alpha=contrast)
+        #randomize gamma
+        gamma = np.random.uniform(0.5,1.5)
+        input_image_i = np.power(input_image/255.0, gamma)*255.0
+        input_image_i = np.uint8(input_image)
+        #randomize saturation
+        saturation = np.random.uniform(0.5,1.5)
+        input_image_i = cv2.cvtColor(input_image, cv2.COLOR_BGR2HSV)
+        input_image_i[:,:,1] = input_image_i[:,:,1]*saturation
+        input_image_i = cv2.cvtColor(input_image_i, cv2.COLOR_HSV2BGR)
+        #randomize exposures
+        exposure = np.random.uniform(0.5,1.5)
+        input_image_i = cv2.convertScaleAbs(input_image, alpha=exposure)
+        #concatenate the input image and input image_i horizontally to form a new input image
+        input_image = np.concatenate((input_image,input_image_i), axis=1)
+        output_image = np.concatenate((output_image,output_image), axis=1)
+        gradient = np.concatenate((gradient,gradient), axis=1)
+
+    return input_image, output_image, gradient
+
 def get_factors(number):
     factors = []
     for i in range(1,number+1):
@@ -105,10 +130,8 @@ def model_output(input_image, weights):
 
 #get weighted average of 24 arrays
 def get_weighted_average(weights, array1, array2, array3, array4, array5, array6):
-    #weighted_average = weights[3,0]*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3)/(np.sum(weights))+weights[4,0]*array4*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3)/(np.sum(weights))+weights[5,0]*array5*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3)/(np.sum(weights))
-    #weighted_average = weights[4,0]*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3 + weights[3,0]*array4)/(np.sum(weights))+weights[5,0]0*array5*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3 + weights[3,0]*array4)/(np.sum(weights))+weights[6,0]*array6*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3 + weights[3,0]*array4)/(np.sum(weights))
-    weighted_average = array6*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3 + weights[3,0]*array4 + weights[4,0]*array5 + weights[5,0]*array4*array5 + weights[6,0]*array4*array6)
-    #weighted_average = (1+weights[5,0]*array6)*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3 + weights[3,0]*array4 + weights[4,0]*array5)/(np.sum(weights))
+    #weighted_average = array6*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3 + weights[3,0]*array4 + weights[4,0]*array5 + weights[5,0]*array4*array5 + weights[6,0]*array4*array6)
+    weighted_average = (weights[5,0]*array6+weights[6,0])*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3 + weights[3,0]*array4 + weights[4,0]*array5)
     return weighted_average
 
 #compute cost given two arrays
@@ -190,11 +213,16 @@ weights[3,0] = 0.0
 weights[4,0] = -0.7
 weights[5,0] = 0.3
 weights[6,0] = 1
-
+weights = np.array([[2.77323259],[-4.28669185],[2.87523104],[-0.40948264],[-2.14548059],[0.69278767],[1.30010453]])
 #initialize random threshold between 0 and 255
 threshold = np.random.randint(0,256)
 
 input_image, output_image, gaussian = load_images(input_filenames=input_filenames, output_filenames=output_filenames, dataset_folder=dataset_folder)
+
+input_image, output_image, gaussian = domain_randomization(input_image, output_image,gaussian, 2)
+
+cv2.imshow('input', input_image)
+cv2.waitKey(0)
 
 #convert output image to grayscale
 output_image = cv2.cvtColor(output_image, cv2.COLOR_BGR2GRAY)
@@ -216,7 +244,7 @@ prevcost = 2*cost
 
 incr = 0.00001
 
-learning_rate = 0.000004
+learning_rate = 0.0000005
 
 #cost record 4533
 
