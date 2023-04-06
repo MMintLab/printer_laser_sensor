@@ -142,7 +142,7 @@ def get_weighted_average(weights, array1, array2, array3, array4, array5, array6
     #weighted_average = weights[3,0]*(weights[0,0]*array1 + weights[1,0]*array2)+weights[4,0]*array4*(weights[0,0]*array1 + weights[1,0]*array2)+weights[5,0]*array5*(weights[0,0]*array1 + weights[1,0]*array2)+weights[6,0]*array6*(weights[0,0]*array1 + weights[1,0]*array2)+weights[2,0]*array6*array5*array4*(weights[0,0]*array1 + weights[1,0]*array2)
     #2665:
     #weighted_average = weights[3,0]*(weights[0,0]*array1 + weights[1,0]*array2)+weights[4,0]*array4*(weights[0,0]*array1 + weights[1,0]*array2)+weights[5,0]*array5*(weights[0,0]*array1 + weights[1,0]*array2)+weights[6,0]*array6*(weights[0,0]*array1 + weights[1,0]*array2)+weights[2,0]*array6*array4*(weights[0,0]*array1 + weights[1,0]*array2)
-    #2600:
+    #2600:  
     weighted_average = (weights[2,0]*array4+1)*(weights[3,0]+weights[4,0]*array4+weights[5,0]*array5+weights[6,0]*array6)*(weights[0,0]*array1 + weights[1,0]*array2)
     return weighted_average
 
