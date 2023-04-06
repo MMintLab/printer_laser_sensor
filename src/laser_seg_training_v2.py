@@ -67,7 +67,7 @@ def get_gaussian_distribution(image_size, center, sigma):
     #get x and y grids
     x_grid, y_grid = np.meshgrid(x, y)
     #get gaussian distribution
-    gaussian = 0.2+0.8*np.exp(-((x_grid-center[0])**2 + (x_grid-center[1])**2)/(2*sigma**2))
+    gaussian = 0.05+0.95*np.exp(-((x_grid-center[0])**2 + (x_grid-center[1])**2)/(2*sigma**2))
     return gaussian
 
 #load all images and concatenate into the squarest grid possible given the number of images
@@ -136,14 +136,10 @@ def model_output(input_image, weights):
 
 #get weighted average of 24 arrays
 def get_weighted_average(weights, array1, array2, array3, array4, array5, array6):
-    #2773:
+    #3230: [[ 1.56705132],[-1.62194881],[ 1.81531795],[-0.81997267],[ 0.84794668],[ 0.82546347],[ 0.9593826 ]]
     #weighted_average = weights[3,0]*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3)+weights[4,0]*array4*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3)+weights[5,0]*array5*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3)+weights[6,0]*array6*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3)
-    #2670:
-    #weighted_average = weights[3,0]*(weights[0,0]*array1 + weights[1,0]*array2)+weights[4,0]*array4*(weights[0,0]*array1 + weights[1,0]*array2)+weights[5,0]*array5*(weights[0,0]*array1 + weights[1,0]*array2)+weights[6,0]*array6*(weights[0,0]*array1 + weights[1,0]*array2)+weights[2,0]*array6*array5*array4*(weights[0,0]*array1 + weights[1,0]*array2)
-    #2665:
-    #weighted_average = weights[3,0]*(weights[0,0]*array1 + weights[1,0]*array2)+weights[4,0]*array4*(weights[0,0]*array1 + weights[1,0]*array2)+weights[5,0]*array5*(weights[0,0]*array1 + weights[1,0]*array2)+weights[6,0]*array6*(weights[0,0]*array1 + weights[1,0]*array2)+weights[2,0]*array6*array4*(weights[0,0]*array1 + weights[1,0]*array2)
-    #2600:  
-    weighted_average = (weights[2,0]*array4+1)*(weights[3,0]+weights[4,0]*array4+weights[5,0]*array5+weights[6,0]*array6)*(weights[0,0]*array1 + weights[1,0]*array2)
+    #2872: [[ 1.69363196],[-1.6618664 ],[ 1.84804704],[-0.62443325],[ 0.99020843],[ 0.96908061],[ 1.05501475]] or [[ 1.7132077 ],[-1.67486628],[ 1.85987175],[-0.61617768],[ 0.98510165],[ 1.00277349],[ 1.06495964]]
+    weighted_average = weights[3,0]*(weights[0,0]*array1 + weights[1,0]*array2)+weights[4,0]*array4*(weights[0,0]*array1 + weights[1,0]*array2)+weights[5,0]*array5*(weights[0,0]*array1 + weights[1,0]*array2)+weights[6,0]*array6*(weights[0,0]*array1 + weights[1,0]*array2)+weights[2,0]*array6*array5*array4*(weights[0,0]*array1 + weights[1,0]*array2)
     return weighted_average
 
 #compute cost given two arrays
@@ -223,7 +219,8 @@ def gradient_descent(input_image, output_image, weights, incr, learning_rate, gr
 #create 2x1 random numpy array
 weights = 6*np.random.rand(7,1)*(np.random.rand(7,1)-0.5)
 
-weights = np.array([[ 1.30373802],[-1.49808124],[2],[ 0.75967262],[-0.28958838],[ 1.11442494],[ 0.5165746 ]]).reshape(7,1)
+#weights = np.array([[ 1.14728661],[-1.28433483],[ 1.90583605],[ 0.46678963],[-0.38226958],[ 0.84446257],[ 0.32680001]]).reshape(7,1)
+weights = np.array([[ 1.56705132],[-1.62194881],[ 1.81531795],[-0.81997267],[ 0.84794668],[ 0.82546347],[ 0.9593826 ]]).reshape(7,1)
 #initialize random threshold between 0 and 255
 threshold = np.random.randint(0,256)
 
