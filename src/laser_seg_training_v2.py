@@ -62,8 +62,8 @@ def get_closest_factors(factors):
 
 def get_gaussian_distribution(image_size, center, sigma):
     #get x and y values
-    x = np.arange(0, image_size[0], 1)
-    y = np.arange(0, image_size[1], 1)
+    x = np.arange(0, image_size[1], 1)
+    y = np.arange(0, image_size[0], 1)
     #get x and y grids
     x_grid, y_grid = np.meshgrid(x, y)
     #get gaussian distribution
@@ -93,9 +93,13 @@ def load_images(input_filenames, output_filenames, dataset_folder):
     #load images into input and output arrays
     for i in range(len(input_filenames)):
         input_image = cv2.imread(dataset_folder+input_filenames[i])
+        #crop bottom of image by 10 pixels
+        input_image = input_image[0:input_image.shape[0]-30, :, :]
         output_image = cv2.imread(dataset_folder+output_filenames[i])
+        #crop bottom of image by 10 pixels
+        output_image = output_image[0:output_image.shape[0]-30, :, :]
         image_size = input_image.shape
-        gaussian = get_gaussian_distribution(image_size, (image_size[0]/2, image_size[1]/2), 10)
+        gaussian = get_gaussian_distribution(image_size, (image_size[0]/2, image_size[1]/2), 16)
         #get row and column of image
         row = int(i/cols)
         col = i%cols
@@ -116,6 +120,7 @@ def model_output(input_image, weights):
     sat_channel = get_sat_channel(input_image)
     value_channel = get_value_channel(input_image)
     lum_channel = get_lum_channel(input_image)
+    hue_channel = get_hue_channel(input_image)
     #make all images go from 0 to 1
     red_channel = red_channel/255
     green_channel = green_channel/255
@@ -123,15 +128,22 @@ def model_output(input_image, weights):
     sat_channel = sat_channel/255
     value_channel = value_channel/255
     lum_channel = lum_channel/255
-    weighted_average = get_weighted_average(weights, red_channel, green_channel, blue_channel, sat_channel, value_channel, lum_channel)
+    hue_channel = hue_channel/180
+    weighted_average = get_weighted_average(weights, red_channel, green_channel, blue_channel, sat_channel, hue_channel, value_channel)
     #output image is 255 if weighted average is greater than threshold, 0 otherwise
     output_image = weighted_average
     return output_image
 
 #get weighted average of 24 arrays
 def get_weighted_average(weights, array1, array2, array3, array4, array5, array6):
-    #weighted_average = array6*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3 + weights[3,0]*array4 + weights[4,0]*array5 + weights[5,0]*array4*array5 + weights[6,0]*array4*array6)
-    weighted_average = (weights[5,0]*array6+weights[6,0])*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3 + weights[3,0]*array4 + weights[4,0]*array5)
+    #2773:
+    #weighted_average = weights[3,0]*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3)+weights[4,0]*array4*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3)+weights[5,0]*array5*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3)+weights[6,0]*array6*(weights[0,0]*array1 + weights[1,0]*array2 + weights[2,0]*array3)
+    #2670:
+    #weighted_average = weights[3,0]*(weights[0,0]*array1 + weights[1,0]*array2)+weights[4,0]*array4*(weights[0,0]*array1 + weights[1,0]*array2)+weights[5,0]*array5*(weights[0,0]*array1 + weights[1,0]*array2)+weights[6,0]*array6*(weights[0,0]*array1 + weights[1,0]*array2)+weights[2,0]*array6*array5*array4*(weights[0,0]*array1 + weights[1,0]*array2)
+    #2665:
+    #weighted_average = weights[3,0]*(weights[0,0]*array1 + weights[1,0]*array2)+weights[4,0]*array4*(weights[0,0]*array1 + weights[1,0]*array2)+weights[5,0]*array5*(weights[0,0]*array1 + weights[1,0]*array2)+weights[6,0]*array6*(weights[0,0]*array1 + weights[1,0]*array2)+weights[2,0]*array6*array4*(weights[0,0]*array1 + weights[1,0]*array2)
+    #2600:
+    weighted_average = (weights[2,0]*array4+1)*(weights[3,0]+weights[4,0]*array4+weights[5,0]*array5+weights[6,0]*array6)*(weights[0,0]*array1 + weights[1,0]*array2)
     return weighted_average
 
 #compute cost given two arrays
@@ -176,6 +188,11 @@ def get_value_channel(image):
     value_channel = hsv_image[:,:,2]
     return value_channel
 
+def get_hue_channel(image):
+    hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    hue_channel = hsv_image[:,:,0]
+    return hue_channel
+
 def gradient_descent(input_image, output_image, weights, incr, learning_rate, gradient):
     output_test = model_output(input_image, weights)
     #find gradient of the cost for each set of indices
@@ -204,22 +221,15 @@ def gradient_descent(input_image, output_image, weights, incr, learning_rate, gr
     return new_weights
 
 #create 2x1 random numpy array
-weights = np.random.rand(7,1)
+weights = 6*np.random.rand(7,1)*(np.random.rand(7,1)-0.5)
 
-weights[0,0] = 1.5
-weights[1,0] = -2
-weights[2,0] = 1
-weights[3,0] = 0.0
-weights[4,0] = -0.7
-weights[5,0] = 0.3
-weights[6,0] = 1
-weights = np.array([[2.77323259],[-4.28669185],[2.87523104],[-0.40948264],[-2.14548059],[0.69278767],[1.30010453]])
+weights = np.array([[ 1.30373802],[-1.49808124],[2],[ 0.75967262],[-0.28958838],[ 1.11442494],[ 0.5165746 ]]).reshape(7,1)
 #initialize random threshold between 0 and 255
 threshold = np.random.randint(0,256)
 
 input_image, output_image, gaussian = load_images(input_filenames=input_filenames, output_filenames=output_filenames, dataset_folder=dataset_folder)
 
-input_image, output_image, gaussian = domain_randomization(input_image, output_image,gaussian, 2)
+input_image, output_image, gaussian = domain_randomization(input_image, output_image,gaussian, 0)
 
 cv2.imshow('input', input_image)
 cv2.waitKey(0)
@@ -244,9 +254,31 @@ prevcost = 2*cost
 
 incr = 0.00001
 
-learning_rate = 0.0000005
+learning_rate = 0.000001
 
-#cost record 4533
+#cost record 2667
+
+#show red channel
+cv2.imshow('red', get_red_channel(input_image))
+cv2.waitKey(0)
+#show green channel
+cv2.imshow('green', get_green_channel(input_image))
+cv2.waitKey(0)
+#show blue channel
+cv2.imshow('blue', get_blue_channel(input_image))
+cv2.waitKey(0)
+#show saturation channel
+cv2.imshow('sat', get_sat_channel(input_image))
+cv2.waitKey(0)
+#show luminosity channel
+cv2.imshow('lum', get_lum_channel(input_image))
+cv2.waitKey(0)
+#show value channel
+cv2.imshow('value', get_value_channel(input_image))
+cv2.waitKey(0)
+#show hue channel
+cv2.imshow('hue', get_hue_channel(input_image))
+cv2.waitKey(0)
 
 #gradient descent until cost changes by less than 1 percent
 while abs(cost-prevcost) > 0.000001*prevcost:
