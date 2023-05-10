@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import time
 
-data_folder = 'data/Jan11_2023/'
+data_folder = 'data/May10_2023/'
 
 #create global variables mouseX and mouseY as empty lists
 global mouseX

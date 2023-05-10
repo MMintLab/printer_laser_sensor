@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import time
 
-dataset_folder = 'nozzleseg_dataset/'
+dataset_folder = 'nozzleseg_dataset_v2/'
 
 #get sorted list of filenames beginning with 'input'
 input_filenames = sorted([img for img in os.listdir(dataset_folder) if img.startswith('input')])
@@ -186,7 +186,7 @@ while abs(cost-prevcost) > 0.0001*prevcost:
     #print(np.min(output_test))
     #show output image
     cv2.imshow('output', output_test)
-    cv2.waitKey(0)
+    cv2.waitKey(1)
     cost = compute_cost(output_test, output_image)
 
 print(cost)
